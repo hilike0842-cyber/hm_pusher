@@ -1,0 +1,22 @@
+name: Rust_Agent_Build
+
+on: [push] # 只要你一改代码，云端就自动编译
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Rust Target
+        run: rustup target add aarch64-unknown-linux-musl
+
+      - name: Run Build
+        # 云端 Linux 环境自带 gcc，绝对不会报错
+        run: cargo build --release --target aarch64-unknown-linux-musl
+
+      - name: Upload Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-agent-bin
+          path: target/aarch64-unknown-linux-musl/release/hm_pusher
